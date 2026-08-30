@@ -31,7 +31,7 @@ internal static class AirbaseOverlayViewPositionPatch
                 return;
 
             __instance.transform.rotation = cockpitHudCamera.transform.rotation;
-            
+
             UpdateAirbaseMarker(__instance, aircraft);
             UpdateRunwayBorders(__instance);
             UpdateGlideslope(__instance, aircraft);
@@ -75,7 +75,7 @@ internal static class AirbaseOverlayViewPositionPatch
         }
 
         var rotation = Quaternion.LookRotation(airbaseMarker.transform.position - cockpitHudCamera.transform.position);
-        
+
         airbaseMarker.transform.rotation = rotation;
         airbaseLabel.transform.rotation = rotation;
     }
@@ -138,11 +138,7 @@ internal static class AirbaseOverlayViewPositionPatch
         var runwayVelocity = runwayUsage.Value.Runway.GetVelocity();
         var closingSpeed = Vector3.Dot(aircraft.rb.velocity - runwayVelocity, (runwayEndPosition - aircraft.transform.position).normalized);
         var timeToRunwayEnd = distanceToRunwayEnd / closingSpeed;
-        var aimPointWorldPosition = runwayUsage.Value.Runway.GetGlideslopeAimpoint(
-            aircraft,
-            distanceToRunwayEnd * 0.9f,
-            runwayUsage.Value.Reverse,
-            timeToRunwayEnd * 0.9f);
+        var aimPointWorldPosition = runwayUsage.Value.GetGlideslopeAimpoint( aircraft, distanceToRunwayEnd * 0.9f, timeToRunwayEnd * 0.9f);
 
         if (!VrHudProjection.TryProjectToCockpitHud(runwayEndPosition, out var runwayEndHudPosition) ||
             !VrHudProjection.TryProjectToCockpitHud(aimPointWorldPosition, out var aimPointHudPosition))

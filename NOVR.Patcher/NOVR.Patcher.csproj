@@ -15,7 +15,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="AssetsTools.NET" Version="2.0.9" />
+        <PackageReference Include="AssetsTools.NET" Version="3.0.5" />
         <Reference Include="$(NuclearOptionFallbackLibDir)/*.dll">
             <Private>False</Private>
         </Reference>
@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="CopyToGame\**" >
+        <Content Include="CopyToGame\**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="classdata.tpk">
@@ -36,7 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mono.Cecil" Version="0.10.4" IncludeAssets="compile" />
+        <PackageReference Include="Mono.Cecil" Version="0.11.6" IncludeAssets="compile" />
     </ItemGroup>
 
     <Target Name="CopyXrAssembliesToPatcherPayload" BeforeTargets="StageGameLayout">
@@ -46,9 +46,6 @@
         </ItemGroup>
 
         <MakeDir Directories="$(TargetDir)CopyToGame/Data/Managed" />
-        <Copy
-            SourceFiles="@(XrAssemblyPayload)"
-            DestinationFiles="@(XrAssemblyPayload->'$(TargetDir)CopyToGame/Data/Managed/%(Filename)%(Extension)')"
-            SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(XrAssemblyPayload)" DestinationFiles="@(XrAssemblyPayload->'$(TargetDir)CopyToGame/Data/Managed/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
     </Target>
 </Project>
