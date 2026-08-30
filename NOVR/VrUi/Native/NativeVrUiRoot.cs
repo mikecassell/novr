@@ -220,7 +220,7 @@ public class NativeVrUiRoot : NOVRBehaviour
         _multiplayerPanel.Initialize(_actions, rectTransform);
         _multiplayerPanel.SetVisible(false);
         _singlePlayerMissionPanel = _root.AddComponent<NativeSinglePlayerMissionPanel>();
-        _singlePlayerMissionPanel.Initialize(_actions, rectTransform);
+        _singlePlayerMissionPanel.Initialize(_actions, rectTransform, OpenStockMissionCustomization);
         _singlePlayerMissionPanel.SetVisible(false);
         _settingsPanel = _root.AddComponent<NativeSettingsPanel>();
         _settingsPanel.Initialize(_actions, rectTransform);
@@ -770,6 +770,19 @@ public class NativeVrUiRoot : NOVRBehaviour
         _workshopPanel?.SetVisible(false);
         _vrUiSettingsPanel?.SetVisible(false);
         SuppressOriginalMainCanvas(true);
+    }
+
+    private void OpenStockMissionCustomization()
+    {
+        _singlePlayerMissionPickerRequested = false;
+        _singlePlayerMissionPanel?.SetVisible(false);
+        RestoreOriginalMainCanvas();
+        if (_root != null)
+        {
+            _root.SetActive(false);
+        }
+
+        Debug.Log("[NOVR] Native VR UI handed mission customization back to the stock menu.");
     }
 
     private void ShowMultiplayerPanelImmediately()
