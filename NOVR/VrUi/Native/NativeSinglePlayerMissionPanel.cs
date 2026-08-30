@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NuclearOption.Networking;
@@ -31,6 +32,7 @@ public class NativeSinglePlayerMissionPanel : MonoBehaviour
     private readonly List<TagFilterDefinition> _tagFilters = new();
 
     private NativeGameActionAdapter? _actions;
+    private Action? _openStockMissionCustomization;
     private RectTransform? _container;
     private Font? _font;
     private Text? _titleText;
@@ -45,9 +47,10 @@ public class NativeSinglePlayerMissionPanel : MonoBehaviour
     private int _activeTagFilterIndex;
     private bool _loaded;
 
-    public void Initialize(NativeGameActionAdapter actions, RectTransform root)
+    public void Initialize(NativeGameActionAdapter actions, RectTransform root, Action openStockMissionCustomization)
     {
         _actions = actions;
+        _openStockMissionCustomization = openStockMissionCustomization;
         _font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         BuildLayout(root);
     }
@@ -332,7 +335,10 @@ public class NativeSinglePlayerMissionPanel : MonoBehaviour
         if (_selectedIndex < 0 || _selectedIndex >= _filteredMissions.Count) return;
 
         _actions?.TrySelectOriginalMission(_filteredMissions[_selectedIndex].Key);
-        _actions?.TryInvokeCurrentMenuButton("Customize Mission", "Customize Mission", "CUSTOMIZE MISSION");
+        if (_actions?.TryInvokeCurrentMenuButton("Customize Mission", "Customize Mission", "CUSTOMIZE MISSION") == true)
+        {
+            _openStockMissionCustomization?.Invoke();
+        }
     }
 
     private void StartSelectedMission()
