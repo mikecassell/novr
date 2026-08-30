@@ -155,10 +155,7 @@ public class Patcher
         am.LoadClassPackage(classDataPath);
         var ggm = am.LoadAssetsFile(globalSettingsBackupPath, false);
         var ggmFile = ggm.file;
-        var ggmTable = ggm.table;
         am.LoadClassDatabaseFromPackage(ggmFile.typeTree.unityVersion);
-
-        List<AssetsReplacer> replacers = new();
         
         // TODO: Read inputs from globalgamemanagers, store map somewhere, patch in-game?
         // AssetFileInfoEx inputManager = ggmTable.GetAssetInfo(2);
@@ -189,10 +186,8 @@ public class Patcher
         //     Console.WriteLine($"name:{name} | positiveButton:{positiveButton} ");
         // }
         
-        var buildSettings = ggmTable.GetAssetInfo(11);
-        #pragma warning disable CS0618 // Type or member is obsolete
-        var buildSettingsBase = am.GetATI(ggmFile, buildSettings).GetBaseField();
-        #pragma warning restore CS0618 // Type or member is obsolete
+        var buildSettings = ggmFile.GetAssetInfo(11);
+        var buildSettingsBase = am.GetBaseField(ggm, buildSettings);
         var enabledVRDevices = buildSettingsBase.Get("enabledVRDevices").Get("Array");
         var stringTemplate = enabledVRDevices.templateField.children[1];
         
@@ -200,11 +195,10 @@ public class Patcher
         AssetTypeValueField[] vrDevicesList = { StringField("OpenVR", stringTemplate), StringField("Oculus", stringTemplate) };
         enabledVRDevices.SetChildrenList(vrDevicesList);
 
-        replacers.Add(new AssetsReplacerFromMemory(0, buildSettings.index, (int)buildSettings.curFileType, 0xffff,
-            buildSettingsBase.WriteToByteArray()));
+        buildSettings.SetNewData(buildSettingsBase);
 
         using AssetsFileWriter writer = new(File.OpenWrite(globalSettingsFilePath));
-        ggmFile.Write(writer, 0, replacers, 0);
+        ggmFile.Write(writer);
     }
 
     private static AssetTypeValueField StringField(string str, AssetTypeTemplateField template)
@@ -214,7 +208,7 @@ public class Patcher
             children = null,
             childrenCount = 0,
             templateField = template,
-            value = new AssetTypeValue(EnumValueTypes.ValueType_String, str)
+            value = new AssetTypeValue(str)
         };
     }
 
